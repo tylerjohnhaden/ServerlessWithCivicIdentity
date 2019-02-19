@@ -45,8 +45,10 @@ exports.colorIdentification = async event => {
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': 'https://color.tylerjohnhaden.com',
                 'Access-Control-Allow-Credentials': 'true',
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Origin': 'https://color.tylerjohnhaden.com',
+                'Access-Control-Allow-Methods': 'OPTIONS,GET',
             },
             body: JSON.stringify({
                 yourUserIdentity: anonymousUserId,

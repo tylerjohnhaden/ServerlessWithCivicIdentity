@@ -45,8 +45,7 @@ civicSip.on('auth-code-received', event => {
 });
 
 function getColorIdentity(token) {
-    console.log(token);
-
+    console.debug('Attempting to send token to API color resource');
     fetch(apiColorIdentificationEndpoint, {
         withCredentials: true,
         credentials: 'include',
@@ -56,10 +55,9 @@ function getColorIdentity(token) {
         }
 
     // display your color
-    }).then(responseObject => {
-        console.log(responseObject);
-        console.log(responseObject.json());
-        color(responseObject.yourColorIdentity);
+    }).then(response =>response.json()).then(identities => {
+        console.info(`Received anonymous identity information from API: ${JSON.stringify(identities, null, 4)}`);
+        color(identities.yourColorIdentity);
 
     // or log error and display random color
     }).catch(err => {
@@ -73,8 +71,7 @@ function color(intValue) {
 
     // display color
     document.body.style.backgroundColor = hexValue;
-    window.location.hash = hexValue;
-    console.debug(`Coloring: ${hexValue}`);
+    console.info(`Coloring: ${hexValue}`);
 }
 
 function error(message) {

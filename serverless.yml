@@ -12,7 +12,7 @@ plugins:
 custom:
   customDomain:
     domainName: api.color.tylerjohnhaden.com
-    certificateName: 'tylerjohnhaden.com'
+    certificateName: 'color.tylerjohnhaden.com'
     basePath: ''
     stage: ${self:provider.stage}
     createRoute53Record: true
@@ -37,7 +37,7 @@ resources:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
         ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'color.tylerjohnhaden.com'"
+          gatewayresponse.header.Access-Control-Allow-Origin: "'https://color.tylerjohnhaden.com'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
