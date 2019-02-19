@@ -1,0 +1,68 @@
+service: tylerjohnhaden-civic-color
+
+# https://serverless.com/framework/docs/providers/aws/events/apigateway/
+# https://serverless.com/blog/cors-api-gateway-survival-guide/
+# https://serverless.com/blog/serverless-api-gateway-domain/
+# https://hackernoon.com/you-should-use-ssm-parameter-store-over-lambda-env-variables-5197fc6ea45b
+# https://medium.com/tomincode/using-custom-authorizer-context-with-lambda-proxy-integration-1f6eeabb5e4f
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: api.color.tylerjohnhaden.com
+    certificateName: 'tylerjohnhaden.com'
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    endpointType: edge
+    enabled: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: us-east-2
+  stackTags:
+    project: tylerjohnhaden-civic-color
+
+package:
+  include:
+    - node_modules/*
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+
+functions:
+  color-dentification:
+    handler: functions/color.colorIdentification
+    events:
+      - http:
+          path: 'identification'
+          method: get
+          authorizer: custom-civic-authorizer
+          cors:
+            origin: 'https://color.tylerjohnhaden.com'
+            allowCredentials: true
+            headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+  custom-civic-authorizer:
+    handler: functions/auth.customCivicAuthorizer
+    environment:
+      CIVIC_APP_ID: ${ssm:/tylerjohnhaden/civic-color/APP_ID}
+      CIVIC_APP_SECRET: ${ssm:/tylerjohnhaden/civic-color/APP_SECRET~true}
+      CIVIC_PRIVATE_SIGNING_KEY: ${ssm:/tylerjohnhaden/civic-color/PRIVATE_SIGNING_KEY~true}

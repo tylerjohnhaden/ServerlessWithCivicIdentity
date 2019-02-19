@@ -1,0 +1,25 @@
+{
+  "name": "serverless-with-civic-identity",
+  "version": "0.0.1",
+  "description": "S3 plus lambda with Civic integration",
+  "repository": "https://github.com/tylerjohnhaden/ServerlessWithCivicIdentity",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "serverless",
+    "security",
+    "civic"
+  ],
+  "author": "Tyler John Haden",
+  "license": "MIT",
+  "dependencies": {
+    "civic-sip-api": "^1.1.0",
+    "jsonwebtoken": "^8.4.0"
+  },
+  "devDependencies": {
+    "serverless": "^1.37.0",
+    "serverless-domain-manager": "^2.6.13"
+  }
+}
