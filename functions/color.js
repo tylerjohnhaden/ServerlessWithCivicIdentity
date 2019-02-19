@@ -16,7 +16,7 @@ const crypto = require('crypto');
 */
 
 // the function that will become a lambda
-// requires that event.requestContext.anonymousUserId is valid (returned by lambda authorizer)
+// requires that event.requestContext.authorizer.anonymousUserId is valid (returned by lambda authorizer)
 exports.colorIdentification = async event => {
     console.debug(`Attempting color identification for ${JSON.stringify(event, null, 4)}`);
 
@@ -46,9 +46,7 @@ exports.colorIdentification = async event => {
             statusCode: 200,
             headers: {
                 'Access-Control-Allow-Credentials': 'true',
-                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
                 'Access-Control-Allow-Origin': 'https://color.tylerjohnhaden.com',
-                'Access-Control-Allow-Methods': 'OPTIONS,GET',
             },
             body: JSON.stringify({
                 yourUserIdentity: anonymousUserId,

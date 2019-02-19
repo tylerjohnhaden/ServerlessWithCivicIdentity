@@ -1,7 +1,7 @@
 {
   "name": "serverless-with-civic-identity",
-  "version": "0.0.1",
-  "description": "S3 plus lambda with Civic integration",
+  "version": "1.0.0",
+  "description": "Adding Civic Integration to Your Boilerplate AWS Static Website",
   "repository": "https://github.com/tylerjohnhaden/ServerlessWithCivicIdentity",
   "main": "handler.js",
   "scripts": {

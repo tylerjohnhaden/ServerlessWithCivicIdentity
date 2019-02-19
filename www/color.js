@@ -40,6 +40,8 @@ civicSip.on('auth-code-received', event => {
     console.info(`Civic anonymous identity token: ${anonymousIdentityToken}`);
     console.info(`Decoded token: ${JSON.stringify(JSON.parse(atob(anonymousIdentityToken.split('.')[1])), null, 4)}`);
 
+    loading(true);
+
     // pass the token to our backend for processing
     getColorIdentity(anonymousIdentityToken);
 });
@@ -57,26 +59,32 @@ function getColorIdentity(token) {
     // display your color
     }).then(response =>response.json()).then(identities => {
         console.info(`Received anonymous identity information from API: ${JSON.stringify(identities, null, 4)}`);
-        color(identities.yourColorIdentity);
 
-    // or log error and display random color
-    }).catch(err => {
-        error(err)
-    });
+        // convert integer into hex color format
+        const hexValue = '#' + identities.yourColorIdentity.toString(16).padStart(6, '0');
+
+        // display color
+        document.body.style.backgroundColor = hexValue;
+        loading(false);
+
+        setTimeout(() => {
+            alert(`Your personal identity is ${identities.yourUserIdentity}!\n\n` +
+                  `Your color identity is ${hexValue}!`);
+        }, 20);
+
+    // or display error
+    }).catch(err => error(err));
 }
 
-function color(intValue) {
-    // convert integer into hex color format
-    const hexValue = '#' + intValue.toString(16).padStart(6, '0');
-
-    // display color
-    document.body.style.backgroundColor = hexValue;
-    console.info(`Coloring: ${hexValue}`);
+function loading(start) {
+    if (start) {
+        document.getElementById("loading").style.display = "block";
+    } else {
+        document.getElementById("loading").style.display = "none";
+    }
 }
 
 function error(message) {
     console.error(message);
-
-    // random color 0x000000 ... 0xffffff
-    color(Math.floor(Math.random() * 16777216));
+    loading(false);
 }
