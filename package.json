@@ -19,7 +19,7 @@
     "jsonwebtoken": "^8.4.0"
   },
   "devDependencies": {
-    "serverless": "^1.37.0",
+    "serverless": "^1.37.1",
     "serverless-domain-manager": "^2.6.13"
   }
 }

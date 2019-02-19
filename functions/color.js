@@ -21,7 +21,7 @@ exports.colorIdentification = async event => {
     console.debug(`Attempting color identification for ${JSON.stringify(event, null, 4)}`);
 
     // the lambda authorizer which fronts this function passes back Civic's anonymous user identity
-    const { requestContext: { anonymousUserId } } = event;
+    const { requestContext: { authorizer: { anonymousUserId } } } = event;
 
     // from Civic's documentation https://docs.civic.com/#ANONYMOUS_LOGIN
     // anonymousUserId will look something like this:
@@ -44,9 +44,10 @@ exports.colorIdentification = async event => {
 
         return {
             statusCode: 200,
-//            headers: {
-//                'Access-Control-Allow-Origin': 'https://color.tylerjohnhaden.com'
-//            },
+            headers: {
+                'Access-Control-Allow-Origin': 'https://color.tylerjohnhaden.com',
+                'Access-Control-Allow-Credentials': 'true',
+            },
             body: JSON.stringify({
                 yourUserIdentity: anonymousUserId,
                 yourColorIdentity: colorId,

@@ -18,7 +18,7 @@ const apiColorIdentificationEndpoint = "https://api.color.tylerjohnhaden.com/ide
 // initialize civic client, will fail if not from an origin specified by the app's owner
 const civicSip = new civic.sip({ appId });
 
-// kickoff function, is run on document load
+// kickoff function, is run on document load (doesn't have to though)
 function requestAnonymousIdentity() {
     // anonymous is currently in beta (2019-2-15) https://docs.civic.com/#ANONYMOUS_LOGIN
     civicSip.signup({ style: 'popup', scopeRequest: civicSip.ScopeRequests.ANONYMOUS_LOGIN });
@@ -57,6 +57,8 @@ function getColorIdentity(token) {
 
     // display your color
     }).then(responseObject => {
+        console.log(responseObject);
+        console.log(responseObject.json());
         color(responseObject.yourColorIdentity);
 
     // or log error and display random color

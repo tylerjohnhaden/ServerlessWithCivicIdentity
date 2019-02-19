@@ -96,7 +96,7 @@ exports.customCivicAuthorizer = async event => {
                 ],
             },
             context: {
-                "anonymousUserId": identityData.userId  // what gets passed to the requested lambda resource
+                "anonymousUserId": identityData.userId  // duplicates principalId, but can be whatever
             },
         };
 

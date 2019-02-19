@@ -37,7 +37,7 @@ resources:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
         ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Origin: "'color.tylerjohnhaden.com'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
@@ -60,6 +60,8 @@ functions:
             - Authorization
             - X-Api-Key
             - X-Amz-Security-Token
+    environment:
+      CIVIC_PRIVATE_SIGNING_KEY: ${ssm:/tylerjohnhaden/civic-color/PRIVATE_SIGNING_KEY~true}
   custom-civic-authorizer:
     handler: functions/auth.customCivicAuthorizer
     environment:
