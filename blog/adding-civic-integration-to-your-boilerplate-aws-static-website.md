@@ -16,7 +16,7 @@ This article describes an application that takes advantage of AWS serverless ser
 
 Our application will also have some super secret resources that will require our user to supply some form of identity. [Civic](https://www.civic.com/) is a third party secure identity ecosystem, that we can integrate for seamless anonymous user management. We can use this anonymous identity to uniquely control resource access, and customize the user's data.
 
-Lambda is a great option to run Civic's server side javascript SDK, and will also satisfy our _serverless_ fascination. We can employee the [Serverless framework](https://serverless.com/) to spin up an API Gateway, and Lambda function for us. It'll also include a tool for specifying the same SSL certificate we used to secure our static site for our API.
+Lambda is a great option to run Civic's server side Javascript SDK, and will also satisfy our _serverless_ fascination. We can employee the [Serverless framework](https://serverless.com/) to spin up an API Gateway, and Lambda function for us. It'll also include a tool for specifying the same SSL certificate we used to secure our static site for our API.
 
 
 # Architecture and Data Flow
@@ -103,6 +103,8 @@ Since AWS Lambda will eventually need to use these parameters, let us save these
 
 Civic's [client side documentation](https://docs.civic.com/#Browser) shows how to integrate their code into your website. Their client side is CDN hosted: [https://hosted-sip.civic.com/js/civic.sip.min.js](https://hosted-sip.civic.com/js/civic.sip.min.js).
 
+To use it we can simply add it into our `index.html`:
+
 ```html
 <html>
 ...
@@ -112,6 +114,8 @@ Civic's [client side documentation](https://docs.civic.com/#Browser) shows how t
 </body>
 </html>
 ```
+
+We also want need to add some Javascript to send the scope request, pass it along to our backend (non-existent at the moment), and get back the user's identity data. Using Civic's SDK, we can build the scope request. 
 
 ```javascript
 const appId = "pfdsARzpj";
@@ -126,6 +130,12 @@ function requestAnonymousIdentity() {
 }
 ```
 
+This particular application does not need any user's personally identifiable data like phone number or email. We can choose `ANONYMOUS_LOGIN` scope request to ensure we don't receive this data. As of writing this article, this feature is still in beta, but the use case is still achievable by simply ignoring the user's data and only passing the unique user id with any scope. Find more about these options in their [scope request docs](https://docs.civic.com/#ScopeRequests).
+
+> In order for Civic to function as an MFA solution, you must use the userID field returned in the Anonymous or Basic scope request response as your MFA credential. Additional information such as email address or phone number can be requested as needed; however, this data is not necessarily a unique identifier for the Civic user.
+
+After we send our scope request to Civic, the SDK exposes several events that are triggered based on the results or user interactions.
+
 ```javascript
 civicSip.on('auth-code-received', event => {});
 civicSip.on('user-cancelled', event => {});
@@ -133,8 +143,35 @@ civicSip.on('read', event => {});
 civicSip.on('civic-sip-error', event => {});
 ```
 
+The `auth-code-received` event is where we want to capture a successful scope request. If you would like, you can add error logging or retries for the other events shown.
+
+After we get a successful response, we can parse it for the JWT token. The token enough to identify the user, application, and scope, however this information is not available to the user yet. We have to pass it back to Civic to "decrypt" this information.
+
 ```javascript
 civicSip.on('auth-code-received', event => {
+    // receive jwt token from Civic
+    const anonymousIdentityToken = event.response;
+
+    console.info(`Civic anonymous identity token: ${anonymousIdentityToken}`);
+    console.info(`Decoded token: ${JSON.stringify(JSON.parse(atob(anonymousIdentityToken.split('.')[1])), null, 4)}`);
+
+    // pass the token to our backend for processing
+    getColorIdentity(anonymousIdentityToken);
+});
+```
+
+The decoding of the token above is just for debugging. You can see how we can't yet access the identity information inside the token. Civic requires the token to be verified on the backend before sharing the user's data. It just so happens that in this use case, we eventually pass back the user id but we don't have to.
+
+![missing pic: Civic JWT Token](civic_jwt_token.png)
+
+We can get a little bit of insight into the token by decoding, such as the expiration is 30 minutes. Here, `codeToken` will eventually be converted into our user id. For more information on JWT in general, checkout the [jwt.io docs](https://jwt.io/introduction/).
+
+Next, we send this token to our backend. There is nothing wrong with passing the token back in the body, but the standard way http passes these tokens is using the `Authorization` header. This also makes it simpler for us to use AWS Lambda Authorizers (although they can use custom locations for the token). 
+
+This can be accomplished with a simple GET request with authorization credentials specified.
+
+```javascript
+function getColorIdentity(token) {
     fetch(apiColorIdentificationEndpoint, {
         withCredentials: true,
         credentials: 'include',
@@ -144,17 +181,40 @@ civicSip.on('auth-code-received', event => {
         }
 
     }).then(response => response.json()).then(identities => {
+        console.info(`Received anonymous identity information from API: ${JSON.stringify(identities, null, 4)}`);
+
+        // convert integer into hex color format
+        const hexValue = '#' + identities.yourColorIdentity.toString(16).padStart(6, '0');
 
         // display color
-        document.body.style.backgroundColor = '#' + identities.yourColorIdentity.toString(16).padStart(6, '0');
+        document.body.style.backgroundColor = hexValue;
 
-        console.info(identities);
-        
-    }).catch(err => error(err));
-});
+        setTimeout(() => {
+            alert(`Your personal identity is ${identities.yourUserIdentity}!\n\n` +
+                  `Your color identity is ${hexValue}!`);
+        }, 20);
+
+    // or display error
+    }).catch(err => console.error(err));
+}
 ```
 
+Our backend will turn the Civic JWT token into an anonymous user identity, and color identity. The user id is just for debugging, and our use case uses the color identity to set the background color of the web page.
+
+The Javascript [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and most http request APIs abstract away the CORS negotiation. Since our backend is at a different origin (even sub-domains count as cross-origin), there is a request to `OPTIONS` that will return various important headers agreeing with our credentials and cross-origin request, more on this in the next section.
+
+## Upload new static files
+
+With `index.html` and `color.js` finished, upload these to your S3 bucket we created before. You may want to [invalidate your CloudFront cache](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html) to speed up seeing the new site populate. 
+
+To test our latest static web site, navigate to it in a browser. You should get Civic to respond with a QR code, but the request to our backend will fail. Now we can continue on to writing our API.
+
+
 # Create a backend to verify identity
+
+The way we designed our architecture, the backend API is a completely separate component from our static website. This offers several advantages and is common in a serverless architecture. Of course it's pretty easy to separate concerns when there is only one API call needed for the use case. 
+
+Our solution is to use AWS Lambda to both interface with Civic and to perform our backend "color processing". 
 
 [discussion of jwt in a serverless environment](https://yos.io/2017/09/03/serverless-authentication-with-jwt/)
 

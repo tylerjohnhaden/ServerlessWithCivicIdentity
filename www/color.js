@@ -35,8 +35,6 @@ civicSip.on('auth-code-received', event => {
     // receive jwt token from Civic
     const anonymousIdentityToken = event.response;
 
-    // todo: save token as cookie? need to investigate if anonymous civic tokens have re-usability
-
     console.info(`Civic anonymous identity token: ${anonymousIdentityToken}`);
     console.info(`Decoded token: ${JSON.stringify(JSON.parse(atob(anonymousIdentityToken.split('.')[1])), null, 4)}`);
 
