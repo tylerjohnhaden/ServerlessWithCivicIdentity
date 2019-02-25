@@ -57,7 +57,7 @@ function getColorIdentity(token) {
         }
 
     // display your color
-    }).then(response =>response.json()).then(identities => {
+    }).then(response => response.json()).then(identities => {
         console.info(`Received anonymous identity information from API: ${JSON.stringify(identities, null, 4)}`);
 
         // convert integer into hex color format

@@ -3,8 +3,6 @@
 const civicSip = require('civic-sip-api');
 const jwt = require('jsonwebtoken');
 
-const CivicIntegrationError = require('./util');
-
 /*
     Custom Civic Authorizer abstracts away Civic's SDK from any resource using their tokens.
 
@@ -51,9 +49,8 @@ exports.customCivicAuthorizer = async event => {
         identityData = await civicClient.exchangeCode(authorizationToken);
 
     } catch(error) {
-        throw new CivicIntegrationError('civicClient.exchangeCode threw on await');
-//        // will return 500 Server Error
-//        throw new Error('Server Error');
+        console.error(`civicClient.exchangeCode threw on await: ${JSON.stringify(error)}`);
+        throw new Error('Unauthorized');
     }
 
     /*
@@ -101,7 +98,6 @@ exports.customCivicAuthorizer = async event => {
         };
 
     } else {
-        // will return 401 Unauthorized
         throw new Error('Unauthorized');
     }
 };
