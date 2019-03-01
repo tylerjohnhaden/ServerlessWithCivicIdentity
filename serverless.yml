@@ -1,4 +1,4 @@
-service: tylerjohnhaden-civic-color
+service: tylerjohnhaden-civic-color1
 
 # https://serverless.com/framework/docs/providers/aws/events/apigateway/
 # https://serverless.com/blog/cors-api-gateway-survival-guide/
@@ -11,8 +11,8 @@ plugins:
 
 custom:
   customDomain:
-    domainName: api.color.tylerjohnhaden.com
-    certificateName: 'color.tylerjohnhaden.com'
+    domainName: api.color1.tylerjohnhaden.com
+    certificateName: 'color1.tylerjohnhaden.com'
     basePath: ''
     stage: ${self:provider.stage}
     createRoute53Record: true
@@ -25,7 +25,7 @@ provider:
   stage: dev
   region: us-east-2
   stackTags:
-    project: tylerjohnhaden-civic-color
+    project: tylerjohnhaden-civic-color1
 
 package:
   include:
@@ -37,14 +37,14 @@ resources:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
         ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'https://color.tylerjohnhaden.com'"
+          gatewayresponse.header.Access-Control-Allow-Origin: "'https://color1.tylerjohnhaden.com'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: 'ApiGatewayRestApi'
 
 functions:
-  color-dentification:
+  color-identification:
     handler: functions/color.colorIdentification
     events:
       - http:
@@ -52,7 +52,7 @@ functions:
           method: get
           authorizer: custom-civic-authorizer
           cors:
-            origin: 'https://color.tylerjohnhaden.com'
+            origin: 'https://color1.tylerjohnhaden.com'
             allowCredentials: true
             headers:
             - Content-Type

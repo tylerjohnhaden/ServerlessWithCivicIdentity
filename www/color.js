@@ -13,7 +13,7 @@
 */
 
 const appId = "pfdsARzpj";
-const apiColorIdentificationEndpoint = "https://api.color.tylerjohnhaden.com/identification";
+const apiColorIdentificationEndpoint = "https://api.color1.tylerjohnhaden.com/identification";
 
 // initialize civic client, will fail if not from an origin specified by the app's owner
 const civicSip = new civic.sip({ appId });
