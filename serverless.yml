@@ -6,8 +6,8 @@ service: tylerjohnhaden-civic-ramdev
 # https://hackernoon.com/you-should-use-ssm-parameter-store-over-lambda-env-variables-5197fc6ea45b
 # https://medium.com/tomincode/using-custom-authorizer-context-with-lambda-proxy-integration-1f6eeabb5e4f
 
-plugins:
-  - serverless-domain-manager
+#plugins:
+#  - serverless-domain-manager
 
 #custom:
 #  customDomain:
@@ -27,7 +27,7 @@ provider:
   stackTags:
     project: tylerjohnhaden-civic-ramdev
 
-// not actually sure if this is necessary
+# not actually sure if this is necessary
 package:
   include:
     - node_modules/*
@@ -38,7 +38,7 @@ resources:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
         ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'http://ramdev0.tylerjohnhaden.s3-website-us-east-1.amazonaws.com/'"
+          gatewayresponse.header.Access-Control-Allow-Origin: "'http://ramdev0.tylerjohnhaden.s3-website-us-east-1.amazonaws.com'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
@@ -53,7 +53,7 @@ functions:
           method: get
           authorizer: custom-civic-authorizer
           cors:
-            origin: 'http://ramdev0.tylerjohnhaden.s3-website-us-east-1.amazonaws.com/'
+            origin: 'http://ramdev0.tylerjohnhaden.s3-website-us-east-1.amazonaws.com'
             allowCredentials: true
             headers:
             - Content-Type
@@ -62,7 +62,7 @@ functions:
             - X-Api-Key
             - X-Amz-Security-Token
     environment:
-      CIVIC_PRIVATE_SIGNING_KEY: ${ssm:/tylerjohnhaden/civic-color/PRIVATE_SIGNING_KEY~true}
+      CIVIC_PRIVATE_SIGNING_KEY: ${ssm:/tylerjohnhaden/civic-color/ramdev/PRIVATE_SIGNING_KEY~true}
   custom-civic-authorizer:
     handler: functions/auth.customCivicAuthorizer
     environment:
