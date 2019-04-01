@@ -1,4 +1,4 @@
-service: tylerjohnhaden-civic-color1
+service: tylerjohnhaden-civic-ramdev
 
 # https://serverless.com/framework/docs/providers/aws/events/apigateway/
 # https://serverless.com/blog/cors-api-gateway-survival-guide/
@@ -9,15 +9,15 @@ service: tylerjohnhaden-civic-color1
 plugins:
   - serverless-domain-manager
 
-custom:
-  customDomain:
-    domainName: api.color1.tylerjohnhaden.com
-    certificateName: 'color1.tylerjohnhaden.com'
-    basePath: ''
-    stage: ${self:provider.stage}
-    createRoute53Record: true
-    endpointType: edge
-    enabled: true
+#custom:
+#  customDomain:
+#    domainName: api.color1.tylerjohnhaden.com
+#    certificateName: 'color1.tylerjohnhaden.com'
+#    basePath: ''
+#    stage: ${self:provider.stage}
+#    createRoute53Record: true
+#    endpointType: edge
+#    enabled: true
 
 provider:
   name: aws
@@ -25,8 +25,9 @@ provider:
   stage: dev
   region: us-east-2
   stackTags:
-    project: tylerjohnhaden-civic-color1
+    project: tylerjohnhaden-civic-ramdev
 
+// not actually sure if this is necessary
 package:
   include:
     - node_modules/*
