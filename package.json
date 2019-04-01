@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Adding Civic Integration to Your Boilerplate AWS Static Website",
   "repository": "https://github.com/tylerjohnhaden/ServerlessWithCivicIdentity",
-  "main": "handler.js",
+  "main": "serverless.yml",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,6 +20,5 @@
   },
   "devDependencies": {
     "serverless": "^1.37.1",
-    "serverless-domain-manager": "^2.6.13"
   }
 }

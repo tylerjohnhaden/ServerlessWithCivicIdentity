@@ -6,19 +6,6 @@ service: tylerjohnhaden-civic-ramdev
 # https://hackernoon.com/you-should-use-ssm-parameter-store-over-lambda-env-variables-5197fc6ea45b
 # https://medium.com/tomincode/using-custom-authorizer-context-with-lambda-proxy-integration-1f6eeabb5e4f
 
-#plugins:
-#  - serverless-domain-manager
-
-#custom:
-#  customDomain:
-#    domainName: api.color1.tylerjohnhaden.com
-#    certificateName: 'color1.tylerjohnhaden.com'
-#    basePath: ''
-#    stage: ${self:provider.stage}
-#    createRoute53Record: true
-#    endpointType: edge
-#    enabled: true
-
 provider:
   name: aws
   runtime: nodejs8.10
