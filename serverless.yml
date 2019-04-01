@@ -23,7 +23,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: dev
-  region: us-east-2
+  region: us-east-1
   stackTags:
     project: tylerjohnhaden-civic-ramdev
 
@@ -38,7 +38,7 @@ resources:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
         ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'https://color1.tylerjohnhaden.com'"
+          gatewayresponse.header.Access-Control-Allow-Origin: "'http://ramdev0.tylerjohnhaden.s3-website-us-east-1.amazonaws.com/'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
@@ -53,7 +53,7 @@ functions:
           method: get
           authorizer: custom-civic-authorizer
           cors:
-            origin: 'https://color1.tylerjohnhaden.com'
+            origin: 'http://ramdev0.tylerjohnhaden.s3-website-us-east-1.amazonaws.com/'
             allowCredentials: true
             headers:
             - Content-Type
@@ -66,6 +66,6 @@ functions:
   custom-civic-authorizer:
     handler: functions/auth.customCivicAuthorizer
     environment:
-      CIVIC_APP_ID: ${ssm:/tylerjohnhaden/civic-color/APP_ID}
-      CIVIC_APP_SECRET: ${ssm:/tylerjohnhaden/civic-color/APP_SECRET~true}
-      CIVIC_PRIVATE_SIGNING_KEY: ${ssm:/tylerjohnhaden/civic-color/PRIVATE_SIGNING_KEY~true}
+      CIVIC_APP_ID: ${ssm:/tylerjohnhaden/civic-color/ramdev/APP_ID}
+      CIVIC_APP_SECRET: ${ssm:/tylerjohnhaden/civic-color/ramdev/APP_SECRET~true}
+      CIVIC_PRIVATE_SIGNING_KEY: ${ssm:/tylerjohnhaden/civic-color/ramdev/PRIVATE_SIGNING_KEY~true}
