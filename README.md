@@ -13,7 +13,7 @@
     - Use a path like `/myFirstCivicIntegration/APP_ID` or whatever, then update `serverless.yml` where it is referenced (4 places)
 5. Update `color.js` and `serverless.yml` with the domain created by S3 (3 places)
 6. `npm install` then run `sls deploy`
-7. Update `index.html` with the lambda endpoint generated
+7. Update `index.html` with the lambda endpoint generated (1 place)
 8. Test by browsing to the S3 domain, use phone to authenticate, check responses
 
 
