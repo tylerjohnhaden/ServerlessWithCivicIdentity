@@ -19,6 +19,11 @@
 
 
 
-see blog, but this describes full tutorial
+## see blog, but this describes full tutorial ##
 1. https://blog.ippon.tech/integrating-civic-into-a-static-serverless-website-part-1-of-2/
 2. https://blog.ippon.tech/integrating-civic-into-a-static-serverless-website-part-2-of-2/
+
+The differences include:
+- Custom domain name
+- SSL certificate for static site and api
+- Just `index.html` instead of html, css, js, png files
